@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Phishing Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Voice Phishing Detection System</h1>
+            <p class="subtitle">Powered by Deep Neural Networks & XGBoost Ensemble</p>
+        </header>
+        
+        <main>
+            <!-- Single File Upload -->
+            <section class="upload-section">
+                <h2>Analyze Single Audio File</h2>
+                <div class="upload-area" id="uploadArea">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>Drag and drop MP3, WAV, FLAC, or OGG file here</p>
+                    <p class="or">or</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        Choose File
+                    </button>
+                    <input type="file" id="fileInput" accept=".mp3,.wav,.flac,.ogg" style="display:none;">
+                </div>
+            </section>
+            
+            <!-- Results -->
+            <section id="resultSection" class="result-section" style="display:none;">
+                <h2>Analysis Results</h2>
+                <div id="resultCard" class="result-card">
+                    <div class="result-status" id="resultStatus"></div>
+                    <div class="result-details">
+                        <p><strong>Classification:</strong> <span id="classification"></span></p>
+                        <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+                    </div>
+                    <div class="scores">
+                        <h3>Model Scores</h3>
+                        <div class="score-grid">
+                            <div class="score-box">
+                                <p class="score-label">DNN</p>
+                                <p class="score-value" id="dnnScore">-</p>
+                            </div>
+                            <div class="score-box">
+                                <p class="score-label">XGBoost</p>
+                                <p class="score-value" id="xgbScore">-</p>
+                            </div>
+                            <div class="score-box">
+                                <p class="score-label">Ensemble</p>
+                                <p class="score-value" id="ensembleScore">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="reset()">Analyze Another File</button>
+            </section>
+            
+            <!-- Loading -->
+            <div id="loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Analyzing audio file...</p>
+            </div>
+            
+            <!-- Error -->
+            <div id="errorMessage" class="error-message" style="display:none;"></div>
+        </main>
+        
+        <footer>
+            <p>Voice Phishing Detection System | Machine Learning Project</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
