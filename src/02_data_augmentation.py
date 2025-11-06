@@ -5,7 +5,7 @@ import soundfile as sf
 from pathlib import Path
 from config import (PHISHING_DIR, LEGITIMATE_DIR, AUGMENTED_DIR, 
                     SAMPLE_RATE, AUGMENT_FACTOR)
-from utils import print_section, print_subsection, get_audio_files, ProgressBar, get_logger
+from src.utils import print_section, print_subsection, get_audio_files, ProgressBar, get_logger
 
 logger = get_logger()
 

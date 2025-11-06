@@ -8,7 +8,7 @@ from pathlib import Path
 from config import (PROCESSED_DIR, XGBOOST_MODEL_PATH,
                     XGBOOST_N_ESTIMATORS, XGBOOST_MAX_DEPTH, 
                     XGBOOST_LEARNING_RATE)
-from utils import print_section, print_subsection, get_logger
+from src.utils import print_section, print_subsection, get_logger
 
 logger = get_logger()
 

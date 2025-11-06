@@ -9,7 +9,7 @@ import pickle
 from pathlib import Path
 from config import (PROCESSED_DIR, MODEL_DIR, DNN_MODEL_PATH, DNN_SCALER_PATH,
                     DNN_EPOCHS, DNN_BATCH_SIZE, DNN_VALIDATION_SPLIT)
-from utils import print_section, print_subsection, get_logger
+from src.utils import print_section, print_subsection, get_logger
 
 logger = get_logger()
 
@@ -136,7 +136,8 @@ def train_dnn_model():
     print(f"Legitimate samples: {(y == 0).sum()}")
     
     # Train model
-    detector = DeepPhishingDetector(input_dim=X.shape)
+    detector = DeepPhishingDetector(input_dim=X.shape[1])
+
     history = detector.train(X, y, epochs=DNN_EPOCHS, batch_size=DNN_BATCH_SIZE)
     
     # Save model

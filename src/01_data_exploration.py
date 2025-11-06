@@ -3,7 +3,7 @@ import librosa
 import numpy as np
 from pathlib import Path
 from config import PHISHING_DIR, LEGITIMATE_DIR, SAMPLE_RATE
-from utils import print_section, print_subsection, get_audio_files, get_logger
+from src.utils import print_section, print_subsection, get_audio_files, get_logger
 
 logger = get_logger()
 

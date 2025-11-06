@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 from config import (AUGMENTED_DIR, PHISHING_DIR, LEGITIMATE_DIR, 
                     PROCESSED_DIR, SAMPLE_RATE, N_MFCC)
-from utils import (print_section, print_subsection, get_audio_files, 
+from src.utils import (print_section, print_subsection, get_audio_files, 
                    save_dataframe, ProgressBar, get_logger)
 
 logger = get_logger()

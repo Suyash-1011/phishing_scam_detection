@@ -14,7 +14,7 @@ from pathlib import Path
 from config import (PROCESSED_DIR, MODEL_DIR, DNN_MODEL_PATH, DNN_SCALER_PATH,
                     XGBOOST_MODEL_PATH, RESULTS_DIR, ENSEMBLE_THRESHOLD,
                     DNN_WEIGHT, XGBOOST_WEIGHT)
-from utils import print_section, print_subsection, save_dataframe, get_logger
+from src.utils import print_section, print_subsection, save_dataframe, get_logger
 
 logger = get_logger()
 
@@ -43,7 +43,8 @@ class EnsemblePhishingDetector:
         dnn_pred = self.dnn_model.predict(X_scaled, verbose=0).flatten()
         
         # XGBoost prediction
-        xgb_pred = self.xgb_model.predict_proba(X)
+        xgb_pred = self.xgb_model.predict_proba(X)[:, 1]
+
         
         # Voting (weighted average)
         ensemble_pred = (DNN_WEIGHT * dnn_pred + XGBOOST_WEIGHT * xgb_pred)
@@ -58,7 +59,8 @@ class EnsemblePhishingDetector:
         
         X_scaled = self.dnn_scaler.transform(X)
         dnn_pred = self.dnn_model.predict(X_scaled, verbose=0).flatten()
-        xgb_pred = self.xgb_model.predict_proba(X)
+        xgb_pred = self.xgb_model.predict_proba(X)[:, 1]
+
         ensemble_pred = (DNN_WEIGHT * dnn_pred + XGBOOST_WEIGHT * xgb_pred)
         
         results = []
@@ -128,11 +130,15 @@ def evaluate_models(X_train, X_test, y_train, y_test):
     print(f"  ROC-AUC:   {dnn_auc:.4f}")
     
     # XGBoost
-    xgb_acc = accuracy_score(y_test, test_xgb)
-    xgb_prec = precision_score(y_test, test_xgb)
-    xgb_rec = recall_score(y_test, test_xgb)
-    xgb_f1 = f1_score(y_test, test_xgb)
-    xgb_auc = roc_auc_score(y_test, test_xgb)
+    # XGBoost
+    xgb_class = (test_xgb > 0.5).astype(int)  # Convert probabilities to 0/1 for metrics
+    xgb_acc = accuracy_score(y_test, xgb_class)
+    xgb_prec = precision_score(y_test, xgb_class)
+    xgb_rec = recall_score(y_test, xgb_class)
+    xgb_f1 = f1_score(y_test, xgb_class)
+    xgb_auc = roc_auc_score(y_test, test_xgb)  # Use probabilities only for AUC
+    # keep probabilities for AUC only
+
     
     results['XGBoost'] = {
         'accuracy': xgb_acc,
