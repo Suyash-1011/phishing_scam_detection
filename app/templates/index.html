@@ -1,82 +1,228 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Phishing Detection System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Voice Phishing Detection</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; }
+        .upload-box {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover { background: #764ba2; }
+        .loading, .error, .results { display: none; margin-top: 20px; padding: 20px; border-radius: 8px; }
+        .loading { background: #f0f1ff; text-align: center; }
+        .error { background: #ffebee; color: #f44336; border-left: 4px solid #f44336; }
+        .results { background: #e8f5e9; border-left: 4px solid #4caf50; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .result-row { margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }
+        .result-row strong { color: #666; }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🔐 Voice Phishing Detection System</h1>
-            <p class="subtitle">Powered by Deep Neural Networks & XGBoost Ensemble</p>
-        </header>
+        <h1>🔐 Voice Phishing Detection</h1>
         
-        <main>
-            <!-- Single File Upload -->
-            <section class="upload-section">
-                <h2>Analyze Single Audio File</h2>
-                <div class="upload-area" id="uploadArea">
-                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <p>Drag and drop MP3, WAV, FLAC, or OGG file here</p>
-                    <p class="or">or</p>
-                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                        Choose File
-                    </button>
-                    <input type="file" id="fileInput" accept=".mp3,.wav,.flac,.ogg" style="display:none;">
-                </div>
-            </section>
-            
-            <!-- Results -->
-            <section id="resultSection" class="result-section" style="display:none;">
-                <h2>Analysis Results</h2>
-                <div id="resultCard" class="result-card">
-                    <div class="result-status" id="resultStatus"></div>
-                    <div class="result-details">
-                        <p><strong>Classification:</strong> <span id="classification"></span></p>
-                        <p><strong>Confidence:</strong> <span id="confidence"></span></p>
-                    </div>
-                    <div class="scores">
-                        <h3>Model Scores</h3>
-                        <div class="score-grid">
-                            <div class="score-box">
-                                <p class="score-label">DNN</p>
-                                <p class="score-value" id="dnnScore">-</p>
-                            </div>
-                            <div class="score-box">
-                                <p class="score-label">XGBoost</p>
-                                <p class="score-value" id="xgbScore">-</p>
-                            </div>
-                            <div class="score-box">
-                                <p class="score-label">Ensemble</p>
-                                <p class="score-value" id="ensembleScore">-</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" onclick="reset()">Analyze Another File</button>
-            </section>
-            
-            <!-- Loading -->
-            <div id="loading" class="loading" style="display:none;">
-                <div class="spinner"></div>
-                <p>Analyzing audio file...</p>
-            </div>
-            
-            <!-- Error -->
-            <div id="errorMessage" class="error-message" style="display:none;"></div>
-        </main>
+        <div class="upload-box">
+            <h3>Select Audio File</h3>
+            <p style="color: #999; font-size: 14px; margin-bottom: 15px;">MP3, WAV, FLAC, OGG, M4A</p>
+            <input type="file" id="fileInput" accept=".mp3,.wav,.flac,.ogg,.m4a">
+            <button onclick="uploadFile()">🚀 Analyze</button>
+        </div>
         
-        <footer>
-            <p>Voice Phishing Detection System | Machine Learning Project</p>
-        </footer>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Analyzing audio...</p>
+        </div>
+        
+        <div id="error" class="error"></div>
+        
+        <div id="results" class="results">
+            <h3>Results</h3>
+            <div class="result-row"><strong>Classification:</strong> <span id="classification"></span></div>
+            <div class="result-row"><strong>Confidence:</strong> <span id="confidence"></span></div>
+            <div class="result-row"><strong>DNN Score:</strong> <span id="dnn"></span></div>
+            <div class="result-row"><strong>XGBoost Score:</strong> <span id="xgb"></span></div>
+            <div class="result-row"><strong>Ensemble Score:</strong> <span id="ensemble"></span></div>
+            <button onclick="reset()" style="margin-top: 15px;">Upload Another</button>
+        </div>
     </div>
-    
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+    <script>
+        console.log('✅ Page loaded');
+        
+        function uploadFile() {
+            console.log('✅ Upload button clicked');
+            
+            // Get file
+            const input = document.getElementById('fileInput');
+            const file = input.files[0];
+            
+            console.log('File:', file);
+            
+            if (!file) {
+                showError('Please select a file');
+                return;
+            }
+            
+            console.log('File name:', file.name);
+            console.log('File size:', file.size);
+            console.log('File type:', file.type);
+            
+            // CRITICAL FIX: Check if file properties loaded (macOS issue)
+            if (!file.name || file.name === 'undefined') {
+                console.log('⚠️ File properties not loaded, retrying...');
+                setTimeout(() => uploadFile(), 500);
+                return;
+            }
+            
+            // Validate extension - SAFE way
+            const validExt = ['.mp3', '.wav', '.flac', '.ogg', '.m4a'];
+            const fileName = String(file.name).toLowerCase();
+            const hasValidExt = validExt.some(ext => fileName.endsWith(ext));
+            
+            console.log('Extension check:', fileName, 'Valid:', hasValidExt);
+            
+            if (!hasValidExt) {
+                showError('Invalid file format. Use: ' + validExt.join(', '));
+                return;
+            }
+            
+            // Validate size - check if it's a real number
+            if (!file.size || isNaN(file.size)) {
+                console.log('⚠️ File size not loaded, retrying...');
+                setTimeout(() => uploadFile(), 500);
+                return;
+            }
+            
+            if (file.size > 16 * 1024 * 1024) {
+                showError('File too large (max 16MB)');
+                return;
+            }
+            
+            console.log('✅ Validation passed');
+            
+            // Hide everything
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            console.log('📤 Sending to server...');
+            
+            // Send to server
+            fetch('/api/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('📬 Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('📋 Response data:', data);
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.success) {
+                    showResults(data);
+                } else {
+                    showError(data.error || 'Error analyzing audio');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                showError('Error: ' + error.message);
+            });
+        }
+        
+        function showResults(data) {
+            console.log('✅ Showing results');
+            
+            document.getElementById('classification').textContent = data.classification;
+            document.getElementById('confidence').textContent = data.confidence + '%';
+            document.getElementById('dnn').textContent = data.scores.dnn.toFixed(4);
+            document.getElementById('xgb').textContent = data.scores.xgboost.toFixed(4);
+            document.getElementById('ensemble').textContent = data.scores.ensemble.toFixed(4);
+            
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function showError(msg) {
+            console.error('❌ Error:', msg);
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+        }
+        
+        function reset() {
+            console.log('🔄 Reset');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        console.log('✅ JavaScript ready');
+    </script>
 </body>
 </html>

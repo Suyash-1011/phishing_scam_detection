@@ -86,23 +86,62 @@ class AudioFeatureExtractor:
         }
     
     def extract_features_from_file(self, filepath):
-        """Extract all features from single audio file"""
+        
         try:
+            # Load audio
             y, sr = librosa.load(filepath, sr=self.sr)
             
             features = {}
-            features.update(self.extract_mfcc(y))
-            features.update(self.extract_mel_spectrogram(y))
-            features.update(self.extract_spectral_features(y))
-            features.update(self.extract_energy_features(y))
-            features.update(self.extract_chroma_features(y))
-            features.update(self.extract_tempogram(y))
+            
+            # MFCC features - get MEAN of each coefficient
+            mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=self.n_mfcc)
+            
+            # ✅ IMPORTANT: Take mean across time axis to get scalars
+            for i, mfcc_coef in enumerate(mfcc):
+                features[f'mfcc_{i}'] = float(np.mean(mfcc_coef))  # ✅ Scalar value
+            
+            # Spectral features
+            spectral_centroids = librosa.feature.spectral_centroid(y=y, sr=sr)
+            features['spectral_centroid'] = float(np.mean(spectral_centroids))  # ✅ Scalar
+            
+            spectral_rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
+            features['spectral_rolloff'] = float(np.mean(spectral_rolloff))  # ✅ Scalar
+            
+            # Zero crossing rate
+            zcr = librosa.feature.zero_crossing_rate(y)
+            features['zero_crossing_rate'] = float(np.mean(zcr))  # ✅ Scalar
+            
+            # Tempo
+            tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+            features['tempo'] = float(tempo)  # ✅ Scalar
+            
+            # Chroma features
+            chroma = librosa.feature.chroma_stft(y=y, sr=sr)
+            for i in range(12):
+                features[f'chroma_{i}'] = float(np.mean(chroma[i]))  # ✅ Scalar
+            
+            # Mel spectrogram
+            mel = librosa.feature.melspectrogram(y=y, sr=sr)
+            mel_db = librosa.power_to_db(mel, ref=np.max)
+            for i in range(min(10, mel_db.shape)):
+                features[f'mel_{i}'] = float(np.mean(mel_db[i]))  # ✅ Scalar
+            
+            print(f"✅ Extracted {len(features)} scalar features")
+            
+            # Verify all values are scalars
+            for key, value in features.items():
+                if isinstance(value, (list, np.ndarray)):
+                    print(f"❌ ERROR: Feature '{key}' is not a scalar: {type(value)}")
+                    return None
             
             return features
+            
         except Exception as e:
-            logger.error(f"Error extracting features from {filepath}: {e}")
+            print(f"❌ Error extracting features: {e}")
+            import traceback
+            traceback.print_exc()
             return None
-    
+
     def extract_all_features(self, use_augmented=True):
         """Extract features from entire dataset"""
         print_subsection("Extracting Features")

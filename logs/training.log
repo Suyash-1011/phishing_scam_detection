@@ -440,3 +440,165 @@
 2025-11-05 23:10:33,061 - INFO - Shape: (3, 5)
 2025-11-05 23:10:34,209 - INFO - ROC curves saved
 2025-11-05 23:10:34,473 - INFO - Confusion matrices saved
+2025-11-06 09:49:22,769 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-06 09:49:27,486 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-06 09:49:27,486 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-06 09:49:27,488 - INFO -  * Restarting with stat
+2025-11-06 09:49:31,793 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-06 09:49:31,820 - WARNING -  * Debugger is active!
+2025-11-06 09:49:31,841 - INFO -  * Debugger PIN: 500-415-507
+2025-11-06 09:51:10,687 - INFO - 127.0.0.1 - - [06/Nov/2025 09:51:10] "GET / HTTP/1.1" 200 -
+2025-11-06 09:51:11,134 - INFO - 127.0.0.1 - - [06/Nov/2025 09:51:11] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-11-06 09:51:11,135 - INFO - 127.0.0.1 - - [06/Nov/2025 09:51:11] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-06 09:51:11,372 - INFO - 127.0.0.1 - - [06/Nov/2025 09:51:11] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-06 10:20:02,050 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-06 10:20:02,127 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-06 10:20:02,127 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-06 10:20:02,128 - INFO -  * Restarting with stat
+2025-11-06 10:20:07,084 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-06 10:20:07,109 - WARNING -  * Debugger is active!
+2025-11-06 10:20:07,134 - INFO -  * Debugger PIN: 500-415-507
+2025-11-06 10:20:13,676 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:13] "GET / HTTP/1.1" 200 -
+2025-11-06 10:20:13,709 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:13] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-11-06 10:20:13,709 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:13] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-06 10:20:13,723 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:13] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:20:23,730 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:23] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:20:33,729 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:33] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:20:43,735 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:43] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:20:53,732 - INFO - 127.0.0.1 - - [06/Nov/2025 10:20:53] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:21:03,737 - INFO - 127.0.0.1 - - [06/Nov/2025 10:21:03] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:21:13,826 - INFO - 127.0.0.1 - - [06/Nov/2025 10:21:13] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:21:23,827 - INFO - 127.0.0.1 - - [06/Nov/2025 10:21:23] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:21:33,824 - INFO - 127.0.0.1 - - [06/Nov/2025 10:21:33] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:21:43,826 - INFO - 127.0.0.1 - - [06/Nov/2025 10:21:43] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:21:53,826 - INFO - 127.0.0.1 - - [06/Nov/2025 10:21:53] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:22:03,831 - INFO - 127.0.0.1 - - [06/Nov/2025 10:22:03] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:22:13,825 - INFO - 127.0.0.1 - - [06/Nov/2025 10:22:13] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:22:23,824 - INFO - 127.0.0.1 - - [06/Nov/2025 10:22:23] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:22:33,825 - INFO - 127.0.0.1 - - [06/Nov/2025 10:22:33] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:22:43,822 - INFO - 127.0.0.1 - - [06/Nov/2025 10:22:43] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:22:53,828 - INFO - 127.0.0.1 - - [06/Nov/2025 10:22:53] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:23:03,829 - INFO - 127.0.0.1 - - [06/Nov/2025 10:23:03] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:23:13,825 - INFO - 127.0.0.1 - - [06/Nov/2025 10:23:13] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:23:23,926 - INFO - 127.0.0.1 - - [06/Nov/2025 10:23:23] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:23:34,545 - INFO - 127.0.0.1 - - [06/Nov/2025 10:23:34] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:23:44,555 - INFO - 127.0.0.1 - - [06/Nov/2025 10:23:44] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:23:54,553 - INFO - 127.0.0.1 - - [06/Nov/2025 10:23:54] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:24:04,548 - INFO - 127.0.0.1 - - [06/Nov/2025 10:24:04] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:24:14,552 - INFO - 127.0.0.1 - - [06/Nov/2025 10:24:14] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:24:24,612 - INFO - 127.0.0.1 - - [06/Nov/2025 10:24:24] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:25:05,667 - INFO - 127.0.0.1 - - [06/Nov/2025 10:25:05] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:25:15,682 - INFO - 127.0.0.1 - - [06/Nov/2025 10:25:15] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:25:25,735 - INFO - 127.0.0.1 - - [06/Nov/2025 10:25:25] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:25:42,452 - INFO - 127.0.0.1 - - [06/Nov/2025 10:25:42] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:25:52,568 - INFO - 127.0.0.1 - - [06/Nov/2025 10:25:52] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:27:04,702 - INFO - 127.0.0.1 - - [06/Nov/2025 10:27:04] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 10:27:14,793 - INFO - 127.0.0.1 - - [06/Nov/2025 10:27:14] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:27:59,429 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-06 11:27:59,488 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-06 11:27:59,488 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-06 11:28:04,508 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:04] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:28:05,361 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:05] "GET / HTTP/1.1" 200 -
+2025-11-06 11:28:05,394 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:05] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-06 11:28:05,398 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:05] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-11-06 11:28:05,408 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:05] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:28:15,410 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:15] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:28:25,414 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:25] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:28:35,414 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:35] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:28:45,415 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:45] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:28:55,412 - INFO - 127.0.0.1 - - [06/Nov/2025 11:28:55] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:29:05,412 - INFO - 127.0.0.1 - - [06/Nov/2025 11:29:05] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:29:15,425 - INFO - 127.0.0.1 - - [06/Nov/2025 11:29:15] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:29:25,413 - INFO - 127.0.0.1 - - [06/Nov/2025 11:29:25] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:29:35,414 - INFO - 127.0.0.1 - - [06/Nov/2025 11:29:35] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:29:45,423 - INFO - 127.0.0.1 - - [06/Nov/2025 11:29:45] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:29:55,518 - INFO - 127.0.0.1 - - [06/Nov/2025 11:29:55] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:30:13,796 - INFO - 127.0.0.1 - - [06/Nov/2025 11:30:13] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:30:23,910 - INFO - 127.0.0.1 - - [06/Nov/2025 11:30:23] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:30:33,931 - INFO - 127.0.0.1 - - [06/Nov/2025 11:30:33] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:32:51,522 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-06 11:32:51,588 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-06 11:32:51,588 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-06 11:32:53,017 - INFO - 127.0.0.1 - - [06/Nov/2025 11:32:53] "GET /api/health HTTP/1.1" 200 -
+2025-11-06 11:32:58,804 - INFO - 127.0.0.1 - - [06/Nov/2025 11:32:58] "GET / HTTP/1.1" 200 -
+2025-11-06 11:32:58,855 - INFO - 127.0.0.1 - - [06/Nov/2025 11:32:58] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-11-06 11:32:58,855 - INFO - 127.0.0.1 - - [06/Nov/2025 11:32:58] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-06 11:32:58,871 - INFO - 127.0.0.1 - - [06/Nov/2025 11:32:58] "GET /api/health HTTP/1.1" 200 -
+2025-11-07 10:04:52,680 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 10:04:52,804 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 10:04:52,804 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 10:04:57,436 - INFO - 127.0.0.1 - - [07/Nov/2025 10:04:57] "GET / HTTP/1.1" 200 -
+2025-11-07 10:04:57,847 - INFO - 127.0.0.1 - - [07/Nov/2025 10:04:57] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-11-07 10:04:57,847 - INFO - 127.0.0.1 - - [07/Nov/2025 10:04:57] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-07 10:04:57,866 - INFO - 127.0.0.1 - - [07/Nov/2025 10:04:57] "GET /api/health HTTP/1.1" 200 -
+2025-11-07 10:05:55,951 - INFO - 127.0.0.1 - - [07/Nov/2025 10:05:55] "GET / HTTP/1.1" 200 -
+2025-11-07 10:05:55,967 - INFO - 127.0.0.1 - - [07/Nov/2025 10:05:55] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-11-07 10:05:55,970 - INFO - 127.0.0.1 - - [07/Nov/2025 10:05:55] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-07 10:05:55,985 - INFO - 127.0.0.1 - - [07/Nov/2025 10:05:55] "GET /api/health HTTP/1.1" 200 -
+2025-11-07 10:11:11,427 - INFO - 127.0.0.1 - - [07/Nov/2025 10:11:11] "GET / HTTP/1.1" 200 -
+2025-11-07 10:11:11,443 - INFO - 127.0.0.1 - - [07/Nov/2025 10:11:11] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-11-07 10:11:11,444 - INFO - 127.0.0.1 - - [07/Nov/2025 10:11:11] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-11-07 10:11:11,454 - INFO - 127.0.0.1 - - [07/Nov/2025 10:11:11] "GET /api/health HTTP/1.1" 200 -
+2025-11-07 10:18:13,508 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 10:18:13,634 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 10:18:13,634 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 10:18:21,926 - INFO - 127.0.0.1 - - [07/Nov/2025 10:18:21] "GET / HTTP/1.1" 200 -
+2025-11-07 10:18:35,008 - INFO - 127.0.0.1 - - [07/Nov/2025 10:18:35] "[31m[1mPOST /api/predict HTTP/1.1[0m" 400 -
+2025-11-07 10:29:58,116 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 10:29:58,178 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 10:29:58,178 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 10:30:06,336 - INFO - 127.0.0.1 - - [07/Nov/2025 10:30:06] "GET / HTTP/1.1" 200 -
+2025-11-07 10:30:16,267 - INFO - 127.0.0.1 - - [07/Nov/2025 10:30:16] "[35m[1mPOST /api/predict HTTP/1.1[0m" 500 -
+2025-11-07 10:39:52,120 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 10:39:52,179 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 10:39:52,179 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 10:39:55,199 - INFO - 127.0.0.1 - - [07/Nov/2025 10:39:55] "GET / HTTP/1.1" 200 -
+2025-11-07 10:40:01,940 - INFO - 127.0.0.1 - - [07/Nov/2025 10:40:01] "[35m[1mPOST /api/predict HTTP/1.1[0m" 500 -
+2025-11-07 11:00:57,004 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 11:00:57,158 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 11:00:57,158 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 11:01:05,602 - INFO - 127.0.0.1 - - [07/Nov/2025 11:01:05] "GET / HTTP/1.1" 200 -
+2025-11-07 11:01:13,381 - INFO - 127.0.0.1 - - [07/Nov/2025 11:01:13] "[35m[1mPOST /api/predict HTTP/1.1[0m" 500 -
+2025-11-07 11:06:10,055 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 11:06:10,146 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 11:06:10,146 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 11:06:14,643 - INFO - 127.0.0.1 - - [07/Nov/2025 11:06:14] "GET / HTTP/1.1" 200 -
+2025-11-07 11:06:19,958 - INFO - 127.0.0.1 - - [07/Nov/2025 11:06:19] "[35m[1mPOST /api/predict HTTP/1.1[0m" 500 -
+2025-11-07 11:09:10,924 - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-11-07 11:09:10,992 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.8.216:5001
+2025-11-07 11:09:10,992 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-07 11:09:13,786 - INFO - 127.0.0.1 - - [07/Nov/2025 11:09:13] "GET / HTTP/1.1" 200 -
+2025-11-07 11:09:18,922 - INFO - 127.0.0.1 - - [07/Nov/2025 11:09:18] "[35m[1mPOST /api/predict HTTP/1.1[0m" 500 -
