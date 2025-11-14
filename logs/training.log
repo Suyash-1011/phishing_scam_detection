@@ -602,3 +602,50 @@
 2025-11-07 11:09:10,992 - INFO - [33mPress CTRL+C to quit[0m
 2025-11-07 11:09:13,786 - INFO - 127.0.0.1 - - [07/Nov/2025 11:09:13] "GET / HTTP/1.1" 200 -
 2025-11-07 11:09:18,922 - INFO - 127.0.0.1 - - [07/Nov/2025 11:09:18] "[35m[1mPOST /api/predict HTTP/1.1[0m" 500 -
+2025-11-14 10:06:33,621 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.2.195:5001
+2025-11-14 10:06:33,621 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-14 10:12:11,597 - INFO - Dataset exploration complete: 40 phishing, 40 legitimate
+2025-11-14 10:13:06,741 - INFO - Augmentation complete!
+2025-11-14 10:13:06,741 - INFO - Original files: 80
+2025-11-14 10:13:06,741 - INFO - Augmented files generated: 400
+2025-11-14 10:13:06,741 - INFO - Output directory: /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/data/augmented
+2025-11-14 10:14:00,641 - ERROR - Train/test features not found. Please run feature extraction first.
+2025-11-14 10:14:51,868 - INFO - Found 40 original phishing files
+2025-11-14 10:14:51,868 - INFO - Found 40 original legitimate files
+2025-11-14 10:14:51,870 - INFO - Train split: 64 files, Test split: 16 files
+2025-11-14 10:15:11,170 - INFO - Training samples (with augmentation): 320
+2025-11-14 10:15:11,170 - INFO - Test samples (original only): 16
+2025-11-14 10:15:11,170 - INFO - Total features: 39
+2025-11-14 10:15:11,182 - INFO - Saved training features to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/data/processed/train_features.csv
+2025-11-14 10:15:11,182 - INFO - Shape: (320, 41)
+2025-11-14 10:15:11,186 - INFO - Saved test features to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/data/processed/test_features.csv
+2025-11-14 10:15:11,186 - INFO - Shape: (16, 41)
+2025-11-14 10:15:22,329 - WARNING - At this time, the v2.11+ optimizer `tf.keras.optimizers.Adam` runs slowly on M1/M2 Macs, please use the legacy Keras optimizer instead, located at `tf.keras.optimizers.legacy.Adam`.
+2025-11-14 10:15:22,343 - WARNING - There is a known slowdown when using v2.11+ Keras optimizers on M1/M2 Macs. Falling back to the legacy Keras optimizer, i.e., `tf.keras.optimizers.legacy.Adam`.
+2025-11-14 10:15:22,352 - INFO - DNN model created
+2025-11-14 10:15:22,353 - INFO - Features scaled: mean=-0.0000, std=1.0000
+2025-11-14 10:15:42,120 - INFO - Training complete. Final validation accuracy: 0.3906
+2025-11-14 10:15:42,416 - INFO - DNN Test Accuracy: 0.3125
+2025-11-14 10:15:42,467 - INFO - DNN model saved to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/models/dnn_model.h5
+2025-11-14 10:15:42,468 - INFO - DNN scaler saved to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/models/dnn_scaler.pkl
+2025-11-14 10:16:43,133 - INFO - XGBoost model initialized
+2025-11-14 10:16:43,224 - INFO - XGBoost model trained
+2025-11-14 10:16:43,565 - INFO - Cross-validation complete: 0.6660
+2025-11-14 10:16:43,567 - INFO - XGBoost Test Accuracy: 0.5000
+2025-11-14 10:16:43,570 - INFO - XGBoost model saved to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/models/xgboost_model.json
+2025-11-14 10:24:10,875 - INFO - DNN model loaded
+2025-11-14 10:24:10,888 - INFO - XGBoost model loaded
+2025-11-14 10:24:11,451 - INFO - Saved evaluation metrics to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/results/metrics.csv
+2025-11-14 10:24:11,451 - INFO - Shape: (3, 5)
+2025-11-14 10:24:12,411 - INFO - ROC curves saved
+2025-11-14 10:24:12,726 - INFO - Confusion matrices saved
+2025-11-14 10:29:20,450 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.2.195:5001
+2025-11-14 10:29:20,451 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-14 10:29:28,250 - INFO - 127.0.0.1 - - [14/Nov/2025 10:29:28] "GET / HTTP/1.1" 200 -
+2025-11-14 10:29:28,736 - INFO - 127.0.0.1 - - [14/Nov/2025 10:29:28] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

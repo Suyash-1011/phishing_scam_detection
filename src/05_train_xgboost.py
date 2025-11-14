@@ -1,10 +1,11 @@
-# src/05_train_xgboost.py
 import pandas as pd
 from xgboost import XGBClassifier
 from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn.metrics import classification_report
 import json
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (PROCESSED_DIR, XGBOOST_MODEL_PATH,
                     XGBOOST_N_ESTIMATORS, XGBOOST_MAX_DEPTH, 
                     XGBOOST_LEARNING_RATE)
@@ -89,17 +90,33 @@ def train_xgboost_model():
     """Train XGBoost on features"""
     print_section("XGBOOST MODEL TRAINING")
     
-    # Load features
-    print_subsection("Loading Features")
-    features_path = PROCESSED_DIR / "features_augmented.csv"
-    df = pd.read_csv(features_path)
+    # ✅ FIXED: Load pre-split train and test data
+    print_subsection("Loading Pre-Split Data")
+    train_path = PROCESSED_DIR / "train_features.csv"
+    test_path = PROCESSED_DIR / "test_features.csv"
     
-    X = df.drop(['label', 'filename'], axis=1).values
-    y = df['label'].values
+    # Check if files exist
+    if not train_path.exists() or not test_path.exists():
+        logger.error("Train/test features not found. Please run feature extraction first.")
+        print("❌ Error: train_features.csv or test_features.csv not found")
+        print("Please run: python src/feature_extraction.py")
+        return None, None
     
-    print(f"Dataset shape: {X.shape}")
-    print(f"Phishing samples: {(y == 1).sum()}")
-    print(f"Legitimate samples: {(y == 0).sum()}")
+    train_df = pd.read_csv(train_path)
+    test_df = pd.read_csv(test_path)
+    
+    X_train = train_df.drop(['label', 'filename'], axis=1).values
+    y_train = train_df['label'].values
+    
+    X_test = test_df.drop(['label', 'filename'], axis=1).values
+    y_test = test_df['label'].values
+    
+    print(f"Training set: {X_train.shape}")
+    print(f"  - Phishing: {(y_train == 1).sum()}")
+    print(f"  - Legitimate: {(y_train == 0).sum()}")
+    print(f"Test set: {X_test.shape}")
+    print(f"  - Phishing: {(y_test == 1).sum()}")
+    print(f"  - Legitimate: {(y_test == 0).sum()}")
     
     # Train model
     detector = XGBoostPhishingDetector(
@@ -107,7 +124,14 @@ def train_xgboost_model():
         max_depth=XGBOOST_MAX_DEPTH,
         learning_rate=XGBOOST_LEARNING_RATE
     )
-    cv_scores = detector.train(X, y, cv_folds=5)
+    cv_scores = detector.train(X_train, y_train, cv_folds=5)
+    
+    # Evaluate on test set
+    print_subsection("Test Set Evaluation")
+    test_predictions = detector.predict(X_test)
+    test_accuracy = (test_predictions == y_test).mean()
+    print(f"Test Accuracy: {test_accuracy:.4f}")
+    logger.info(f"XGBoost Test Accuracy: {test_accuracy:.4f}")
     
     # Save model
     detector.save()

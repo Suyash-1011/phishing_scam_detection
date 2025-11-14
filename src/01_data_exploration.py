@@ -1,7 +1,9 @@
 # src/01_data_exploration.py
 import librosa
+import sys
 import numpy as np
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import PHISHING_DIR, LEGITIMATE_DIR, SAMPLE_RATE
 from src.utils import print_section, print_subsection, get_audio_files, get_logger
 

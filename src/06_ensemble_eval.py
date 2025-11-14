@@ -1,4 +1,3 @@
-# src/06_ensemble_eval.py - Part 1
 import numpy as np
 import pandas as pd
 import pickle
@@ -11,6 +10,8 @@ from sklearn.metrics import (accuracy_score, precision_score, recall_score,
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (PROCESSED_DIR, MODEL_DIR, DNN_MODEL_PATH, DNN_SCALER_PATH,
                     XGBOOST_MODEL_PATH, RESULTS_DIR, ENSEMBLE_THRESHOLD,
                     DNN_WEIGHT, XGBOOST_WEIGHT)
@@ -44,7 +45,6 @@ class EnsemblePhishingDetector:
         
         # XGBoost prediction
         xgb_pred = self.xgb_model.predict_proba(X)[:, 1]
-
         
         # Voting (weighted average)
         ensemble_pred = (DNN_WEIGHT * dnn_pred + XGBOOST_WEIGHT * xgb_pred)
@@ -60,7 +60,6 @@ class EnsemblePhishingDetector:
         X_scaled = self.dnn_scaler.transform(X)
         dnn_pred = self.dnn_model.predict(X_scaled, verbose=0).flatten()
         xgb_pred = self.xgb_model.predict_proba(X)[:, 1]
-
         ensemble_pred = (DNN_WEIGHT * dnn_pred + XGBOOST_WEIGHT * xgb_pred)
         
         results = []
@@ -130,15 +129,12 @@ def evaluate_models(X_train, X_test, y_train, y_test):
     print(f"  ROC-AUC:   {dnn_auc:.4f}")
     
     # XGBoost
-    # XGBoost
     xgb_class = (test_xgb > 0.5).astype(int)  # Convert probabilities to 0/1 for metrics
     xgb_acc = accuracy_score(y_test, xgb_class)
     xgb_prec = precision_score(y_test, xgb_class)
     xgb_rec = recall_score(y_test, xgb_class)
     xgb_f1 = f1_score(y_test, xgb_class)
     xgb_auc = roc_auc_score(y_test, test_xgb)  # Use probabilities only for AUC
-    # keep probabilities for AUC only
-
     
     results['XGBoost'] = {
         'accuracy': xgb_acc,
@@ -241,21 +237,33 @@ def run_evaluation():
     """Run complete evaluation"""
     print_section("ENSEMBLE EVALUATION & TESTING")
     
-    # Load features
-    print_subsection("Loading Features")
-    features_path = PROCESSED_DIR / "features_augmented.csv"
-    df = pd.read_csv(features_path)
+    # ✅ FIXED: Load pre-split train and test data
+    print_subsection("Loading Pre-Split Data")
+    train_path = PROCESSED_DIR / "train_features.csv"
+    test_path = PROCESSED_DIR / "test_features.csv"
     
-    X = df.drop(['label', 'filename'], axis=1).values
-    y = df['label'].values
+    # Check if files exist
+    if not train_path.exists() or not test_path.exists():
+        logger.error("Train/test features not found. Please run feature extraction first.")
+        print("❌ Error: train_features.csv or test_features.csv not found")
+        print("Please run: python src/feature_extraction.py")
+        return None
     
-    # Train-test split
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    train_df = pd.read_csv(train_path)
+    test_df = pd.read_csv(test_path)
+    
+    X_train = train_df.drop(['label', 'filename'], axis=1).values
+    y_train = train_df['label'].values
+    
+    X_test = test_df.drop(['label', 'filename'], axis=1).values
+    y_test = test_df['label'].values
     
     print(f"Training set: {X_train.shape} samples")
+    print(f"  - Phishing: {(y_train == 1).sum()}")
+    print(f"  - Legitimate: {(y_train == 0).sum()}")
     print(f"Test set: {X_test.shape} samples")
+    print(f"  - Phishing: {(y_test == 1).sum()}")
+    print(f"  - Legitimate: {(y_test == 0).sum()}")
     
     # Evaluate
     results, plot_data = evaluate_models(X_train, X_test, y_train, y_test)

@@ -1,8 +1,10 @@
-# src/03_feature_extraction.py
 import librosa
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from sklearn.model_selection import train_test_split
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (AUGMENTED_DIR, PHISHING_DIR, LEGITIMATE_DIR, 
                     PROCESSED_DIR, SAMPLE_RATE, N_MFCC)
 from src.utils import (print_section, print_subsection, get_audio_files, 
@@ -123,45 +125,129 @@ class AudioFeatureExtractor:
             # Mel spectrogram
             mel = librosa.feature.melspectrogram(y=y, sr=sr)
             mel_db = librosa.power_to_db(mel, ref=np.max)
-            for i in range(min(10, mel_db.shape)):
+            for i in range(min(10, mel_db.shape[0])):
                 features[f'mel_{i}'] = float(np.mean(mel_db[i]))  # ✅ Scalar
-            
-            print(f"✅ Extracted {len(features)} scalar features")
             
             # Verify all values are scalars
             for key, value in features.items():
                 if isinstance(value, (list, np.ndarray)):
-                    print(f"❌ ERROR: Feature '{key}' is not a scalar: {type(value)}")
+                    logger.error(f"Feature '{key}' is not a scalar: {type(value)}")
                     return None
             
             return features
             
         except Exception as e:
-            print(f"❌ Error extracting features: {e}")
-            import traceback
-            traceback.print_exc()
+            logger.error(f"Error extracting features: {e}")
             return None
 
     def extract_all_features(self, use_augmented=True):
-        """Extract features from entire dataset"""
-        print_subsection("Extracting Features")
+        """
+        Extract features from entire dataset with PROPER train-test split
+        ✅ FIXED: Now splits ORIGINAL files first, then augments only training data
+        """
+        print_subsection("Extracting Features with Proper Train-Test Split")
         
-        if use_augmented:
-            source_dir = AUGMENTED_DIR
-            label_name = "augmented_label"
-        else:
-            source_dir = None
+        if not use_augmented:
+            # Original behavior for non-augmented case
+            return self._extract_without_augmentation()
         
+        # ✅ FIXED: Get ORIGINAL files only
+        phishing_files = get_audio_files(PHISHING_DIR)
+        legitimate_files = get_audio_files(LEGITIMATE_DIR)
+        
+        logger.info(f"Found {len(phishing_files)} original phishing files")
+        logger.info(f"Found {len(legitimate_files)} original legitimate files")
+        
+        # Create file-label pairs
+        phishing_pairs = [(f, 1) for f in phishing_files]
+        legitimate_pairs = [(f, 0) for f in legitimate_files]
+        all_pairs = phishing_pairs + legitimate_pairs
+        
+        files, labels = zip(*all_pairs)
+        
+        # ✅ FIXED: Split ORIGINAL files FIRST (before augmentation)
+        train_files, test_files, train_labels, test_labels = train_test_split(
+            files, labels, test_size=0.2, random_state=42, stratify=labels
+        )
+        
+        logger.info(f"Train split: {len(train_files)} files, Test split: {len(test_files)} files")
+        
+        # ✅ Extract features from TRAINING files (with augmentation)
+        X_train = []
+        y_train = []
+        filenames_train = []
+        
+        print(f"\nExtracting training features (with augmentation)...")
+        progress = ProgressBar(len(train_files), 'Training:')
+        
+        for file, label in zip(train_files, train_labels):
+            # Get augmented versions for this training file
+            base_name = Path(file).stem
+            label_name = "phishing" if label == 1 else "legitimate"
+            aug_pattern = f"{label_name}_{base_name}_*.wav"
+            aug_files = list(AUGMENTED_DIR.glob(aug_pattern))
+            
+            if not aug_files:
+                logger.warning(f"No augmented files found for {file}. Using original.")
+                # Fall back to original if no augmented files
+                features = self.extract_features_from_file(file)
+                if features:
+                    X_train.append(features)
+                    y_train.append(label)
+                    filenames_train.append(Path(file).name)
+            else:
+                # Use augmented versions
+                for aug_file in aug_files:
+                    features = self.extract_features_from_file(aug_file)
+                    if features:
+                        X_train.append(features)
+                        y_train.append(label)
+                        filenames_train.append(aug_file.name)
+            
+            progress.update()
+        progress.finish()
+        
+        # ✅ Extract features from TEST files (NO augmentation, original only)
+        X_test = []
+        y_test = []
+        filenames_test = []
+        
+        print(f"\nExtracting test features (original files only, no augmentation)...")
+        progress = ProgressBar(len(test_files), 'Test:')
+        
+        for file, label in zip(test_files, test_labels):
+            # Use ORIGINAL file only for test set
+            features = self.extract_features_from_file(file)
+            if features:
+                X_test.append(features)
+                y_test.append(label)
+                filenames_test.append(Path(file).name)
+            progress.update()
+        progress.finish()
+        
+        # Convert to DataFrames
+        train_df = pd.DataFrame(X_train)
+        train_df['label'] = y_train
+        train_df['filename'] = filenames_train
+        
+        test_df = pd.DataFrame(X_test)
+        test_df['label'] = y_test
+        test_df['filename'] = filenames_test
+        
+        logger.info(f"Training samples (with augmentation): {len(train_df)}")
+        logger.info(f"Test samples (original only): {len(test_df)}")
+        logger.info(f"Total features: {len(train_df.columns) - 2}")
+        
+        return train_df, test_df
+    
+    def _extract_without_augmentation(self):
+        """Original extraction without augmentation"""
         X = []
         y = []
         filenames = []
         
         # Phishing samples
-        phishing_dirs = [AUGMENTED_DIR / "phishing*"] if use_augmented else [PHISHING_DIR]
-        if use_augmented:
-            phishing_files = [f for f in AUGMENTED_DIR.glob("phishing*") if f.is_file()]
-        else:
-            phishing_files = get_audio_files(PHISHING_DIR)
+        phishing_files = get_audio_files(PHISHING_DIR)
         
         progress = ProgressBar(len(phishing_files), 'Extracting phishing:')
         for file in phishing_files:
@@ -174,10 +260,7 @@ class AudioFeatureExtractor:
         progress.finish()
         
         # Legitimate samples
-        if use_augmented:
-            legitimate_files = [f for f in AUGMENTED_DIR.glob("legitimate*") if f.is_file()]
-        else:
-            legitimate_files = get_audio_files(LEGITIMATE_DIR)
+        legitimate_files = get_audio_files(LEGITIMATE_DIR)
         
         progress = ProgressBar(len(legitimate_files), 'Extracting legitimate:')
         for file in legitimate_files:
@@ -195,28 +278,31 @@ class AudioFeatureExtractor:
         df['filename'] = filenames
         
         logger.info(f"Extracted features from {len(df)} samples")
-        logger.info(f"Total features: {len(df.columns) - 2}")
         
-        return df
+        return df, None  # Return None for test_df in non-augmented case
 
 def run_feature_extraction():
     """Run complete feature extraction pipeline"""
     print_section("FEATURE EXTRACTION PIPELINE")
-    
     extractor = AudioFeatureExtractor(sr=SAMPLE_RATE, n_mfcc=N_MFCC)
-    features_df = extractor.extract_all_features(use_augmented=True)
+    train_df, test_df = extractor.extract_all_features(use_augmented=True)
     
     print_subsection("Feature Extraction Summary")
-    print(f"Total samples: {len(features_df)}")
-    print(f"Feature dimensions: {len(features_df.columns) - 2}")
-    print(f"Phishing samples: {(features_df['label'] == 1).sum()}")
-    print(f"Legitimate samples: {(features_df['label'] == 0).sum()}")
+    print(f"Training samples (with augmentation): {len(train_df)}")
+    print(f"  - Phishing: {(train_df['label'] == 1).sum()}")
+    print(f"  - Legitimate: {(train_df['label'] == 0).sum()}")
+    print(f"Test samples (original only): {len(test_df)}")
+    print(f"  - Phishing: {(test_df['label'] == 1).sum()}")
+    print(f"  - Legitimate: {(test_df['label'] == 0).sum()}")
+    print(f"Feature dimensions: {len(train_df.columns) - 2}")
     
-    # Save features
-    output_path = PROCESSED_DIR / "features_augmented.csv"
-    save_dataframe(features_df, output_path, "augmented features")
+    train_output_path = PROCESSED_DIR / "train_features.csv"
+    test_output_path = PROCESSED_DIR / "test_features.csv"
     
-    return features_df
+    save_dataframe(train_df, train_output_path, "training features")
+    save_dataframe(test_df, test_output_path, "test features")
+    
+    return train_df, test_df
 
 if __name__ == "__main__":
     run_feature_extraction()

@@ -2,7 +2,9 @@
 import librosa
 import numpy as np
 import soundfile as sf
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (PHISHING_DIR, LEGITIMATE_DIR, AUGMENTED_DIR, 
                     SAMPLE_RATE, AUGMENT_FACTOR)
 from src.utils import print_section, print_subsection, get_audio_files, ProgressBar, get_logger
