@@ -649,3 +649,29 @@
 2025-11-14 10:29:20,451 - INFO - [33mPress CTRL+C to quit[0m
 2025-11-14 10:29:28,250 - INFO - 127.0.0.1 - - [14/Nov/2025 10:29:28] "GET / HTTP/1.1" 200 -
 2025-11-14 10:29:28,736 - INFO - 127.0.0.1 - - [14/Nov/2025 10:29:28] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-14 11:58:39,857 - INFO - Random Forest model initialized
+2025-11-14 11:58:40,546 - INFO - Random Forest model trained
+2025-11-14 11:58:41,359 - INFO - Cross-validation complete: 0.6950
+2025-11-14 11:58:41,389 - INFO - Random Forest Test Accuracy: 0.5625
+2025-11-14 11:58:41,393 - INFO - Random Forest model saved to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/models/random_forest.pkl
+2025-11-14 12:01:31,360 - INFO - LightGBM model initialized
+2025-11-14 12:01:31,474 - INFO - LightGBM model trained
+2025-11-14 12:01:31,951 - INFO - Cross-validation complete: 0.6803
+2025-11-14 12:01:31,954 - INFO - LightGBM Test Accuracy: 0.5625
+2025-11-14 12:01:31,955 - INFO - LightGBM model saved to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/models/lightgbm.pkl
+2025-11-14 12:02:22,060 - INFO - DNN model loaded
+2025-11-14 12:02:22,074 - INFO - XGBoost model loaded
+2025-11-14 12:02:22,327 - INFO - Random Forest model loaded
+2025-11-14 12:02:22,358 - INFO - LightGBM model loaded
+2025-11-14 12:02:22,637 - INFO - Saved evaluation metrics to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/results/metrics.csv
+2025-11-14 12:02:22,637 - INFO - Shape: (5, 5)
+2025-11-14 12:02:23,108 - INFO - ROC curves saved
+2025-11-14 12:02:23,798 - INFO - Confusion matrices saved
+2025-11-14 12:04:17,461 - INFO - DNN model loaded
+2025-11-14 12:04:17,472 - INFO - XGBoost model loaded
+2025-11-14 12:04:17,728 - INFO - Random Forest model loaded
+2025-11-14 12:04:17,757 - INFO - LightGBM model loaded
+2025-11-14 12:04:18,038 - INFO - Saved evaluation metrics to /Users/parth/Documents/semester_7 IIITDWD/AI For Cybersecurity/phishing_scam_detection/results/metrics.csv
+2025-11-14 12:04:18,038 - INFO - Shape: (5, 6)
+2025-11-14 12:04:18,419 - INFO - ROC curves saved
+2025-11-14 12:04:19,106 - INFO - Confusion matrices saved

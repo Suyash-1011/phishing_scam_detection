@@ -1,3 +1,4 @@
+# src/06_ensemble_eval.py
 import numpy as np
 import pandas as pd
 import pickle
@@ -20,7 +21,7 @@ from src.utils import print_section, print_subsection, save_dataframe, get_logge
 logger = get_logger()
 
 class EnsemblePhishingDetector:
-    """Ensemble predictor combining DNN and XGBoost"""
+    """Ensemble predictor combining available models"""
     
     def __init__(self):
         print_subsection("Loading Models")
@@ -35,44 +36,65 @@ class EnsemblePhishingDetector:
         self.xgb_model = XGBClassifier()
         self.xgb_model.load_model(XGBOOST_MODEL_PATH)
         logger.info("XGBoost model loaded")
+        
+        # Load Random Forest (if exists)
+        rf_path = MODEL_DIR / "random_forest.pkl"
+        if rf_path.exists():
+            with open(rf_path, 'rb') as f:
+                self.rf_model = pickle.load(f)
+            logger.info("Random Forest model loaded")
+        else:
+            self.rf_model = None
+            logger.warning("Random Forest model not found - skipping")
+        
+        # Load LightGBM (if exists)
+        lgbm_path = MODEL_DIR / "lightgbm.pkl"
+        if lgbm_path.exists():
+            try:
+                with open(lgbm_path, 'rb') as f:
+                    self.lgbm_model = pickle.load(f)
+                logger.info("LightGBM model loaded")
+            except Exception as e:
+                self.lgbm_model = None
+                logger.warning(f"LightGBM model load failed: {e}")
+        else:
+            self.lgbm_model = None
+            logger.warning("LightGBM model not found - skipping")
     
-    def predict_voting(self, X, threshold=ENSEMBLE_THRESHOLD):
-        """Voting ensemble: Average predictions"""
+    def predict_all(self, X):
+        """Get predictions from all available models"""
+        predictions = {}
         
         # DNN prediction
         X_scaled = self.dnn_scaler.transform(X)
-        dnn_pred = self.dnn_model.predict(X_scaled, verbose=0).flatten()
+        predictions['dnn'] = self.dnn_model.predict(X_scaled, verbose=0).flatten()
         
         # XGBoost prediction
-        xgb_pred = self.xgb_model.predict_proba(X)[:, 1]
+        predictions['xgb'] = self.xgb_model.predict_proba(X)[:, 1]
         
-        # Voting (weighted average)
-        ensemble_pred = (DNN_WEIGHT * dnn_pred + XGBOOST_WEIGHT * xgb_pred)
+        # Random Forest prediction (if available)
+        if self.rf_model is not None:
+            predictions['rf'] = self.rf_model.predict_proba(X)[:, 1]
         
-        # Classification
+        # LightGBM prediction (if available)
+        if self.lgbm_model is not None:
+            predictions['lgbm'] = self.lgbm_model.predict_proba(X)[:, 1]
+        
+        return predictions
+    
+    def predict_voting(self, X, threshold=ENSEMBLE_THRESHOLD):
+        """Voting ensemble: Average predictions from all available models"""
+        predictions = self.predict_all(X)
+        
+        # Calculate average of all available models
+        all_preds = []
+        for model_pred in predictions.values():
+            all_preds.append(model_pred)
+        
+        ensemble_pred = np.mean(all_preds, axis=0)
         classifications = (ensemble_pred > threshold).astype(int)
         
-        return ensemble_pred, classifications, dnn_pred, xgb_pred
-    
-    def get_detailed_predictions(self, X, threshold=ENSEMBLE_THRESHOLD):
-        """Get detailed predictions with all scores"""
-        
-        X_scaled = self.dnn_scaler.transform(X)
-        dnn_pred = self.dnn_model.predict(X_scaled, verbose=0).flatten()
-        xgb_pred = self.xgb_model.predict_proba(X)[:, 1]
-        ensemble_pred = (DNN_WEIGHT * dnn_pred + XGBOOST_WEIGHT * xgb_pred)
-        
-        results = []
-        for i in range(len(X)):
-            results.append({
-                'dnn_score': dnn_pred[i],
-                'xgb_score': xgb_pred[i],
-                'ensemble_score': ensemble_pred[i],
-                'prediction': 'PHISHING' if ensemble_pred[i] > threshold else 'LEGITIMATE',
-                'confidence': max(ensemble_pred[i], 1 - ensemble_pred[i])
-            })
-        
-        return results
+        return ensemble_pred, classifications, predictions
 
 def evaluate_models(X_train, X_test, y_train, y_test):
     """Comprehensive model evaluation"""
@@ -83,23 +105,7 @@ def evaluate_models(X_train, X_test, y_train, y_test):
     
     # Get predictions
     print_subsection("Generating Predictions")
-    
-    # Train predictions
-    train_ensemble_pred, train_ensemble_class, train_dnn, train_xgb = ensemble.predict_voting(X_train)
-    
-    # Test predictions
-    test_ensemble_pred, test_ensemble_class, test_dnn, test_xgb = ensemble.predict_voting(X_test)
-    
-    # Load DNN separately for train predictions
-    dnn_model = tf.keras.models.load_model(DNN_MODEL_PATH)
-    with open(DNN_SCALER_PATH, 'rb') as f:
-        scaler = pickle.load(f)
-    
-    xgb_model = XGBClassifier()
-    xgb_model.load_model(XGBOOST_MODEL_PATH)
-    
-    train_dnn_class = (train_dnn > 0.5).astype(int)
-    train_xgb_class = xgb_model.predict(X_train)
+    test_ensemble_pred, test_ensemble_class, test_preds = ensemble.predict_voting(X_test)
     
     # Evaluation on test set
     print_subsection("Test Set Results")
@@ -107,6 +113,7 @@ def evaluate_models(X_train, X_test, y_train, y_test):
     results = {}
     
     # DNN
+    test_dnn = test_preds['dnn']
     dnn_acc = accuracy_score(y_test, (test_dnn > 0.5).astype(int))
     dnn_prec = precision_score(y_test, (test_dnn > 0.5).astype(int))
     dnn_rec = recall_score(y_test, (test_dnn > 0.5).astype(int))
@@ -129,12 +136,13 @@ def evaluate_models(X_train, X_test, y_train, y_test):
     print(f"  ROC-AUC:   {dnn_auc:.4f}")
     
     # XGBoost
-    xgb_class = (test_xgb > 0.5).astype(int)  # Convert probabilities to 0/1 for metrics
+    test_xgb = test_preds['xgb']
+    xgb_class = (test_xgb > 0.5).astype(int)
     xgb_acc = accuracy_score(y_test, xgb_class)
     xgb_prec = precision_score(y_test, xgb_class)
     xgb_rec = recall_score(y_test, xgb_class)
     xgb_f1 = f1_score(y_test, xgb_class)
-    xgb_auc = roc_auc_score(y_test, test_xgb)  # Use probabilities only for AUC
+    xgb_auc = roc_auc_score(y_test, test_xgb)
     
     results['XGBoost'] = {
         'accuracy': xgb_acc,
@@ -151,7 +159,58 @@ def evaluate_models(X_train, X_test, y_train, y_test):
     print(f"  F1-Score:  {xgb_f1:.4f}")
     print(f"  ROC-AUC:   {xgb_auc:.4f}")
     
+    # Random Forest (if available)
+    if 'rf' in test_preds:
+        test_rf = test_preds['rf']
+        rf_class = (test_rf > 0.5).astype(int)
+        rf_acc = accuracy_score(y_test, rf_class)
+        rf_prec = precision_score(y_test, rf_class)
+        rf_rec = recall_score(y_test, rf_class)
+        rf_f1 = f1_score(y_test, rf_class)
+        rf_auc = roc_auc_score(y_test, test_rf)
+        
+        results['RandomForest'] = {
+            'accuracy': rf_acc,
+            'precision': rf_prec,
+            'recall': rf_rec,
+            'f1': rf_f1,
+            'auc': rf_auc
+        }
+        
+        print("\nRandom Forest Results:")
+        print(f"  Accuracy:  {rf_acc:.4f}")
+        print(f"  Precision: {rf_prec:.4f}")
+        print(f"  Recall:    {rf_rec:.4f}")
+        print(f"  F1-Score:  {rf_f1:.4f}")
+        print(f"  ROC-AUC:   {rf_auc:.4f}")
+    
+    # LightGBM (if available)
+    if 'lgbm' in test_preds:
+        test_lgbm = test_preds['lgbm']
+        lgbm_class = (test_lgbm > 0.5).astype(int)
+        lgbm_acc = accuracy_score(y_test, lgbm_class)
+        lgbm_prec = precision_score(y_test, lgbm_class)
+        lgbm_rec = recall_score(y_test, lgbm_class)
+        lgbm_f1 = f1_score(y_test, lgbm_class)
+        lgbm_auc = roc_auc_score(y_test, test_lgbm)
+        
+        results['LightGBM'] = {
+            'accuracy': lgbm_acc,
+            'precision': lgbm_prec,
+            'recall': lgbm_rec,
+            'f1': lgbm_f1,
+            'auc': lgbm_auc
+        }
+        
+        print("\nLightGBM Results:")
+        print(f"  Accuracy:  {lgbm_acc:.4f}")
+        print(f"  Precision: {lgbm_prec:.4f}")
+        print(f"  Recall:    {lgbm_rec:.4f}")
+        print(f"  F1-Score:  {lgbm_f1:.4f}")
+        print(f"  ROC-AUC:   {lgbm_auc:.4f}")
+    
     # Ensemble
+    n_models = len(test_preds)
     ens_acc = accuracy_score(y_test, test_ensemble_class)
     ens_prec = precision_score(y_test, test_ensemble_class)
     ens_rec = recall_score(y_test, test_ensemble_class)
@@ -166,78 +225,118 @@ def evaluate_models(X_train, X_test, y_train, y_test):
         'auc': ens_auc
     }
     
-    print("\nEnsemble Voting Results:")
+    print(f"\nEnsemble Voting Results ({n_models} Models):")
     print(f"  Accuracy:  {ens_acc:.4f}")
     print(f"  Precision: {ens_prec:.4f}")
     print(f"  Recall:    {ens_rec:.4f}")
     print(f"  F1-Score:  {ens_f1:.4f}")
     print(f"  ROC-AUC:   {ens_auc:.4f}")
     
-    # Save metrics
+    # Save metrics with model name as column
     metrics_df = pd.DataFrame(results).T
+    metrics_df.insert(0, 'model', metrics_df.index)  # Add model name as first column
+    metrics_df.reset_index(drop=True, inplace=True)  # Remove index
     save_dataframe(metrics_df, RESULTS_DIR / "metrics.csv", "evaluation metrics")
     
-    return results, (y_test, test_dnn, test_xgb, test_ensemble_pred)
+    # Print summary table
+    print("\n" + "="*70)
+    print("  📊 MODEL COMPARISON SUMMARY")
+    print("="*70)
+    print(metrics_df.to_string(index=False))
+    print("="*70 + "\n")
+    
+    return results, (y_test, test_preds, test_ensemble_pred)
 
-def plot_results(y_test, test_dnn, test_xgb, test_ensemble):
+def plot_results(y_test, test_preds, test_ensemble):
     """Plot ROC curves and confusion matrices"""
     print_subsection("Generating Plots")
     
     # ROC Curves
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(12, 8))
     
-    fpr_dnn, tpr_dnn, _ = roc_curve(y_test, test_dnn)
-    auc_dnn = roc_auc_score(y_test, test_dnn)
+    # Plot each model
+    colors = ['blue', 'green', 'red', 'purple', 'orange']
+    model_names = {'dnn': 'DNN', 'xgb': 'XGBoost', 'rf': 'Random Forest', 'lgbm': 'LightGBM'}
     
-    fpr_xgb, tpr_xgb, _ = roc_curve(y_test, test_xgb)
-    auc_xgb = roc_auc_score(y_test, test_xgb)
+    idx = 0
+    for name, label in model_names.items():
+        if name in test_preds:
+            fpr, tpr, _ = roc_curve(y_test, test_preds[name])
+            auc_score = roc_auc_score(y_test, test_preds[name])
+            plt.plot(fpr, tpr, label=f'{label} (AUC={auc_score:.3f})', 
+                    linewidth=2, color=colors[idx])
+            idx += 1
     
+    # Plot ensemble
     fpr_ens, tpr_ens, _ = roc_curve(y_test, test_ensemble)
     auc_ens = roc_auc_score(y_test, test_ensemble)
+    plt.plot(fpr_ens, tpr_ens, label=f'Ensemble (AUC={auc_ens:.3f})', 
+            linewidth=3, color=colors[idx], linestyle='--')
     
-    plt.plot(fpr_dnn, tpr_dnn, label=f'DNN (AUC={auc_dnn:.3f})', linewidth=2)
-    plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC={auc_xgb:.3f})', linewidth=2)
-    plt.plot(fpr_ens, tpr_ens, label=f'Ensemble (AUC={auc_ens:.3f})', linewidth=2)
     plt.plot([0, 1], [0, 1], 'k--', label='Random Classifier', linewidth=1)
     
     plt.xlabel('False Positive Rate', fontsize=12)
     plt.ylabel('True Positive Rate', fontsize=12)
-    plt.title('ROC Curves Comparison', fontsize=14, fontweight='bold')
-    plt.legend(fontsize=11)
+    plt.title('ROC Curves Comparison - All Models', fontsize=14, fontweight='bold')
+    plt.legend(fontsize=10, loc='lower right')
     plt.grid(alpha=0.3)
     plt.tight_layout()
     plt.savefig(RESULTS_DIR / 'roc_curves.png', dpi=300)
     logger.info("ROC curves saved")
+    plt.close()
     
     # Confusion matrices
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+    n_models = len(test_preds) + 1  # +1 for ensemble
+    n_cols = min(3, n_models)
+    n_rows = (n_models + n_cols - 1) // n_cols
     
-    models = [
-        ('DNN', test_dnn),
-        ('XGBoost', test_xgb),
-        ('Ensemble', test_ensemble)
-    ]
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 5*n_rows))
+    if n_models == 1:
+        axes = [axes]
+    else:
+        axes = axes.flatten() if n_rows > 1 else axes
     
-    for idx, (name, preds) in enumerate(models):
-        class_preds = (preds > 0.5).astype(int)
+    idx = 0
+    for name, label in model_names.items():
+        if name in test_preds and idx < len(axes):
+            class_preds = (test_preds[name] > 0.5).astype(int)
+            cm = confusion_matrix(y_test, class_preds)
+            
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[idx],
+                       xticklabels=['Legitimate', 'Phishing'],
+                       yticklabels=['Legitimate', 'Phishing'])
+            axes[idx].set_title(f'{label} Confusion Matrix', fontweight='bold')
+            axes[idx].set_ylabel('True Label')
+            axes[idx].set_xlabel('Predicted Label')
+            idx += 1
+    
+    # Ensemble confusion matrix
+    if idx < len(axes):
+        class_preds = (test_ensemble > 0.5).astype(int)
         cm = confusion_matrix(y_test, class_preds)
         
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[idx],
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Greens', ax=axes[idx],
                    xticklabels=['Legitimate', 'Phishing'],
                    yticklabels=['Legitimate', 'Phishing'])
-        axes[idx].set_title(f'{name} Confusion Matrix', fontweight='bold')
+        axes[idx].set_title('Ensemble Confusion Matrix', fontweight='bold')
         axes[idx].set_ylabel('True Label')
         axes[idx].set_xlabel('Predicted Label')
+        idx += 1
+    
+    # Hide unused subplots
+    for i in range(idx, len(axes)):
+        axes[i].axis('off')
     
     plt.tight_layout()
     plt.savefig(RESULTS_DIR / 'confusion_matrices.png', dpi=300)
     logger.info("Confusion matrices saved")
+    plt.close()
 
 def run_evaluation():
     """Run complete evaluation"""
     print_section("ENSEMBLE EVALUATION & TESTING")
     
-    # ✅ FIXED: Load pre-split train and test data
+    # Load pre-split train and test data
     print_subsection("Loading Pre-Split Data")
     train_path = PROCESSED_DIR / "train_features.csv"
     test_path = PROCESSED_DIR / "test_features.csv"
