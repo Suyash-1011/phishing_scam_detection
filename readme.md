@@ -548,11 +548,3 @@ This project is developed for educational and research purposes. Please ensure c
 - [Flask](https://flask.palletsprojects.com/) for web application framework
 
 ---
-
-## 📞 Contact
-
-For questions, suggestions, or collaboration opportunities, please reach out to the team members.
-
----
-
-**⚡ Protect yourself from voice phishing attacks with AI-powered detection!**
