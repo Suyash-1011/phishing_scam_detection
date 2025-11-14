@@ -357,7 +357,7 @@ Classification: PHISHING if P(phishing) > 0.5, else LEGITIMATE
 
 ### Base URL
 ```
-http://localhost:5001
+http://localhost:5000
 ```
 
 ### Endpoints
