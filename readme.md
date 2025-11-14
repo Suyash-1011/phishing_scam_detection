@@ -11,6 +11,7 @@ An AI-powered system for detecting voice phishing (vishing) attacks using machin
 - **Suyash Suryavanshi**
 - **Jatin Kushwala**
 - **Noman Baig**
+- **Ayush Pareek**
 
 ---
 
