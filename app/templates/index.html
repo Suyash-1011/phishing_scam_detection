@@ -96,6 +96,8 @@
             <div class="result-row"><strong>Confidence:</strong> <span id="confidence"></span></div>
             <div class="result-row"><strong>DNN Score:</strong> <span id="dnn"></span></div>
             <div class="result-row"><strong>XGBoost Score:</strong> <span id="xgb"></span></div>
+            <div class="result-row" id="rf-row"><strong>Random Forest Score:</strong> <span id="rf"></span></div>
+            <div class="result-row" id="lgbm-row"><strong>LightGBM Score:</strong> <span id="lgbm"></span></div>
             <div class="result-row"><strong>Ensemble Score:</strong> <span id="ensemble"></span></div>
             <button onclick="reset()" style="margin-top: 15px;">Upload Another</button>
         </div>
@@ -197,13 +199,30 @@
         
         function showResults(data) {
             console.log('✅ Showing results');
-            
+
             document.getElementById('classification').textContent = data.classification;
             document.getElementById('confidence').textContent = data.confidence + '%';
             document.getElementById('dnn').textContent = data.scores.dnn.toFixed(4);
             document.getElementById('xgb').textContent = data.scores.xgboost.toFixed(4);
+
+            // Show/hide Random Forest score
+            if (data.scores.random_forest !== undefined) {
+                document.getElementById('rf').textContent = data.scores.random_forest.toFixed(4);
+                document.getElementById('rf-row').style.display = 'block';
+            } else {
+                document.getElementById('rf-row').style.display = 'none';
+            }
+
+            // Show/hide LightGBM score
+            if (data.scores.lightgbm !== undefined) {
+                document.getElementById('lgbm').textContent = data.scores.lightgbm.toFixed(4);
+                document.getElementById('lgbm-row').style.display = 'block';
+            } else {
+                document.getElementById('lgbm-row').style.display = 'none';
+            }
+
             document.getElementById('ensemble').textContent = data.scores.ensemble.toFixed(4);
-            
+
             document.getElementById('results').style.display = 'block';
         }
         
